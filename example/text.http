@@ -1,0 +1,23 @@
+### Call rpc
+POST /api/rpc
+Host: localhost:8080
+Content-Type: application/json
+
+[
+    {
+        "jsonrpc": "2.0",
+        "method": "greet",
+        "params": {
+            "name": "Tester"
+        },
+        "id": "1"
+    },
+    {
+        "jsonrpc": "2.0",
+        "method": "proxy",
+        "params": {
+            "name": "Tester"
+        },
+        "id": "2"
+    }
+]
