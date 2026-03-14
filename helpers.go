@@ -10,8 +10,6 @@ import (
 	"github.com/Meduzz/summer/framework"
 )
 
-// TODO invest in a reflect based wrapper that can automagically translate params to func params?
-
 // Wrap will wrap any (T)=>K, error func and allow you to turn it into a jsonrpc func.
 func Wrap[T any, K any](delegate func(*T) (*K, error)) func(*api.Request) *api.Response {
 	return func(r *api.Request) *api.Response {
@@ -48,7 +46,7 @@ func HttpProxy(verb, url, contentType string) func(*api.Request) *api.Response {
 			return framework.ErrorResponse(r.ID, errors.InternalError(err))
 		}
 
-		err = herror.ErrorFromCode(res.Code())
+		err = herror.IsError(res.Code())
 
 		if err != nil {
 			return framework.ErrorResponse(r.ID, errors.InternalError(err))

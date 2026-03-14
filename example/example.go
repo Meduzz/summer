@@ -21,18 +21,21 @@ type (
 
 func main() {
 	summer.Register("greet", summer.Wrap(Greeter))
-	summer.Register("proxy", summer.HttpProxy("POST", "http://localhost:8080/greet", "application/json"))
+	summer.Register("proxy", summer.HttpProxy("POST", "http://localhost:8080/api/greet", "application/json"))
 
 	disconnected.HttpServer("/", func(s *web.Server) {
+		s.Static("/static", "static/")
+		s.SPA("static/index.html")
 		s.WithRouter(func(e *gin.Engine) {
 			e.POST("/api/rpc", summer.HTTP())
-			e.POST("/greet", func(ctx *gin.Context) {
+			e.POST("/api/greet", func(ctx *gin.Context) {
 				in := &Greeting{}
 				ctx.BindJSON(in)
 
 				out, _ := Greeter(in)
 				ctx.JSON(200, out)
 			})
+			e.GET("/api/ws", summer.WS())
 		})
 	})
 }

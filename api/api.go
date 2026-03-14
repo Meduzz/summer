@@ -35,3 +35,7 @@ type (
 const (
 	JsonRPC = "2.0"
 )
+
+func (r *Request) IsNotification() bool {
+	return r.ID == nil
+}

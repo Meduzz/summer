@@ -3,6 +3,7 @@ package summer
 import (
 	"github.com/Meduzz/summer/api"
 	"github.com/Meduzz/summer/framework"
+	"github.com/Meduzz/summer/transport"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,10 +14,14 @@ func Register(name string, handler api.Handler) {
 
 // HTTP is a gin.HandlerFunc based on the default framework instance
 func HTTP() gin.HandlerFunc {
-	return framework.Instance.HTTP
+	return transport.HTTP(framework.Instance)
 }
 
 // Init creates a new instance of the framework
 func Init() *framework.Summer {
 	return framework.NewFramework()
+}
+
+func WS() gin.HandlerFunc {
+	return transport.WS(framework.Instance)
 }
