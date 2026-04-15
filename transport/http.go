@@ -8,14 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// TODO how to handle authentication authorization and pass it down the the delegates?
 // HTTP this is a gin.HandlerFunc
 func HTTP(summer *framework.Summer) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		isHook := summer.Auth != nil
-		identity := ""
+		identity := framework.NewDummyIdentity()
 
-		if isHook {
+		if summer.Auth != nil {
 			identity = summer.Auth.Identity(ctx)
 		}
 
@@ -36,7 +34,7 @@ func HTTP(summer *framework.Summer) gin.HandlerFunc {
 				return
 			}
 
-			// but instantly pretend it was a batch
+			// instantly pretend it was a batch
 			isBatch = false
 			batchReq = append(batchReq, req)
 		}
@@ -48,16 +46,13 @@ func HTTP(summer *framework.Summer) gin.HandlerFunc {
 			// 2. switch map to forEach and wrap each handler call in a go func(channel, req)
 			// 3. iterate the channel for the expected number of responses then close it and return
 
-			if isHook {
-				if summer.Auth.Verify(identity, req) {
-					return summer.Handle(req)
-				} else {
-					// TODO invent error codes?
-					return framework.ErrorResponse(req.ID, errors.MethodNotFoundError())
-				}
+			// TODO is this enough, or will there still be cases where handlers need raw identity/roles?
+			if identity.Method(req.Method) && identity.Request(req) {
+				return summer.Handle(req)
+			} else {
+				// TODO invent error codes?
+				return framework.ErrorResponse(req.ID, errors.MethodNotFoundError())
 			}
-
-			return summer.Handle(req)
 		})
 
 		if batchRes == nil {

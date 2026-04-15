@@ -8,8 +8,14 @@ import (
 
 type (
 	Hook interface {
-		Identity(*gin.Context) string
-		Verify(string, *api.Request) bool
+		Identity(*gin.Context) Identity
+	}
+
+	Identity interface {
+		// Method - predicate for access to method
+		Method(string) bool
+		// Request - predicate for access to call with request
+		Request(*api.Request) bool
 	}
 
 	Summer struct {

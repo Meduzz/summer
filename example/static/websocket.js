@@ -1,5 +1,5 @@
 // WebSocket connection helper
-const wsUrl = 'ws://localhost:8080/api/ws';
+const wsUrl = '/api/ws';
 
 const socket = new WebSocket(wsUrl);
 
