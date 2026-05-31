@@ -22,6 +22,7 @@ func Init() *framework.Summer {
 	return framework.NewFramework()
 }
 
+// WS is a gin.HandlerFunc that deals with websocket
 func WS() gin.HandlerFunc {
 	return transport.WS(framework.Instance)
 }
